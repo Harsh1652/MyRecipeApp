@@ -1,6 +1,8 @@
 package eu.tutorials.myrecipeapp
 
+import android.telecom.Call.Details
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
@@ -12,7 +14,6 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,9 +25,11 @@ import coil.compose.rememberAsyncImagePainter
 import org.w3c.dom.Text
 
 @Composable
-fun RecipeScreen(modifier: Modifier = Modifier){
+fun RecipeScreen(modifier: Modifier = Modifier,
+                 viewstate:MainViewModel.RecipeState,
+navigateToDetail: (Category) -> Unit){
     val recipeViewModel: MainViewModel = viewModel()
-    val viewstate by recipeViewModel.categoriesState
+
     Box(modifier = Modifier.fillMaxSize()){
         when{
             viewstate.loading ->{
@@ -36,28 +39,32 @@ fun RecipeScreen(modifier: Modifier = Modifier){
                 Text(text = "Error Occurred")
             }
             else -> {
-                CategoryScreen(categories = viewstate.list)
+                CategoryScreen(categories = viewstate.list,
+                    navigateToDetail)
             }
         }
     }
 }
 
 @Composable
-fun CategoryScreen(categories: List<Category>){
+fun CategoryScreen(categories: List<Category>,navigateToDetail: (Category) -> Unit){
     LazyVerticalGrid(GridCells.Fixed(2), modifier = Modifier.fillMaxSize()) {
         items(categories){
-            category -> CategoryItem(category = category)
+            category -> CategoryItem(category = category, navigateToDetail)
         }
     }
 }
 
 //How each item looks like
 @Composable
-fun CategoryItem(category: Category){
+fun CategoryItem(category: Category,
+                 navigateToDetail: (Category) -> Unit
+            ){
 
     Column(modifier = Modifier
         .padding(8.dp)
-        .fillMaxSize(),
+        .fillMaxSize()
+        .clickable { navigateToDetail(category) },
         horizontalAlignment = Alignment.CenterHorizontally) 
     {
         Image(painter = rememberAsyncImagePainter(category.strCategoryThumb),

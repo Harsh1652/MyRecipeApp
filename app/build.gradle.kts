@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("kotlin-parcelize")
+
 }
 
 android {
@@ -51,6 +53,7 @@ android {
 
 dependencies {
 
+    implementation("androidx.navigation:navigation-compose:2.8.2")
     // Compose BOM - Controls Compose versioning for all other dependencies
     implementation(platform(libs.androidx.compose.bom))
     implementation ("androidx.compose.animation:animation:1.7.2")
